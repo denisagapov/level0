@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о заказе</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #orderUID {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #aa1090;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #660385;
+        }
+        #orderInfo {
+            border: 1px solid #ddd;
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+        .error {
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Получить информацию о заказе</h1>
+    <input type="text" id="orderUID" placeholder="Введите order_uid">
+    <button onclick="getOrderInfo()">Получить информацию о заказе</button>
+    <pre id="orderInfo"></pre>
+
+    <script>
+        function getOrderInfo() {
+            var orderUID = document.getElementById('orderUID').value;
+            if (orderUID) {
+                fetch('/order?id=' + orderUID)
+                    .then(function(response) {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Заказ не найден');
+                        }
+                    })
+                    .then(function(data) {
+                        document.getElementById('orderInfo').textContent = JSON.stringify(data, null, 2);
+                        document.getElementById('orderInfo').className = '';
+                    })
+                    .catch(function(error) {
+                        document.getElementById('orderInfo').textContent = error.message;
+                        document.getElementById('orderInfo').className = 'error';
+                    });
+            } else {
+                document.getElementById('orderInfo').textContent = 'Пожалуйста, введите order_uid';
+                document.getElementById('orderInfo').className = 'error';
+            }
+        }
+    </script>
+</body>
+</html>
